@@ -9,13 +9,14 @@ import java.time.LocalDate;
 public interface Appointment {
 
     int getId();
+
     Double getPrice();
 
     Client getClient();
 
     LocalDate getAppointmentDate();
 
-    Boolean rescheduleAppointment(LocalDate date);
+    Boolean rescheduleAppointment(LocalDate date) throws PremiumAppointmentException;
 
     Boolean cancelAppointment() throws DateLimitExceededException, PremiumAppointmentException;
 }

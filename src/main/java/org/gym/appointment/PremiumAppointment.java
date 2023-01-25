@@ -12,8 +12,8 @@ public class PremiumAppointment extends AbstractAppointment {
     private static final Double PRICE = 75.0;
     private final Client client;
 
-    public PremiumAppointment(Client client, LocalDate appointmentDate) {
-        super(PRICE, client, appointmentDate);
+    public PremiumAppointment(int id, Client client, LocalDate appointmentDate) {
+        super(id, PRICE, client, appointmentDate);
         this.client = client;
     }
 
@@ -23,21 +23,24 @@ public class PremiumAppointment extends AbstractAppointment {
     }
 
     @Override
-    public Boolean rescheduleAppointment(LocalDate date) {
-        setAppointmentDate(date);
-        return true;
+    public Boolean rescheduleAppointment(LocalDate date) throws PremiumAppointmentException {
+        try {
+            return super.rescheduleAppointment(date);
+        } catch (PremiumAppointmentException e) {
+            System.out.println("This is a PREMIUM account. Please retry the operation!");
+            throw new PremiumAppointmentException(this.getId(), "Try again!");
+        }
     }
 
     @Override
-    public Boolean cancelAppointment() throws NotAvailableDateException {
+    public Boolean cancelAppointment() throws NotAvailableDateException, PremiumAppointmentException {
         try {
-            super.cancelAppointment();
-            return true;
+            return super.cancelAppointment();
         } catch (DateLimitExceededException dateLimitExceededException) {
             throw new NotAvailableDateException(dateLimitExceededException, LocalDate.now());
         } catch (PremiumAppointmentException e) {
-            System.out.println("This is a PREMIUM account");
-            return true;
+            System.out.println("This is a PREMIUM account. Please retry the operation!");
+            throw new PremiumAppointmentException(this.getId(), "Try again!");
         }
     }
 

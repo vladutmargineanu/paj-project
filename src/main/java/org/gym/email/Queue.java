@@ -4,19 +4,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Queue {
+public class Queue<T> {
 
-    private List<Email> emails = Collections.synchronizedList(new LinkedList<Email>());
+    private List<T> storage = Collections.synchronizedList(new LinkedList<>());
 
-    public void add(Email email) {
-        emails.add(email);
+    public void add(T object) {
+        storage.add(object);
     }
 
-    public Email get() {
-        if (!emails.isEmpty()) {
-            return emails.remove(emails.size() - 1);
+    public T get() {
+        if (!storage.isEmpty()) {
+            return storage.remove(storage.size() - 1);
         }
-
         return null;
     }
 

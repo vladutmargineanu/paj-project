@@ -4,29 +4,29 @@ import java.time.LocalDate;
 
 public class DateLimitExceededException extends GymException {
 
-	private static final long serialVersionUID = -3034651278778929257L;
+    private static final long serialVersionUID = -3034651278778929257L;
 
-	// Default access specifier - access just in the same package
-	// Protected - access to same package and also to different package subclasses
-	int id;
+    // Default access specifier - access just in the same package
+    // Protected - access to same package and also to different package subclasses
+    int id;
 
-	LocalDate appointmentDate;
+    LocalDate appointmentDate;
 
-	public DateLimitExceededException(String message) {
-		super(message);
-	}
+    public DateLimitExceededException(String message) {
+        super(message);
+    }
 
-	public DateLimitExceededException(int id, LocalDate appointmentDate, String message) {
-		super(message);
-		this.id = id;
-		this.appointmentDate = appointmentDate;
-	}
+    public DateLimitExceededException(int id, LocalDate appointmentDate, String message) {
+        super(message);
+        this.id = id;
+        this.appointmentDate = appointmentDate;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public LocalDate getAppointmentDate() {
-		return appointmentDate;
-	}
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
 }

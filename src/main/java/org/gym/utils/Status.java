@@ -4,7 +4,6 @@ public final class Status {
 
     /* Generic */
     public static final String WELCOME_MESSAGE = "WELCOME";
-    public static final String INVALID_OPERATION = "INVALID OPERATION";
     public static final String REGISTRATION_COMPLETED = "REGISTRATION COMPLETED";
 
     /* Client */

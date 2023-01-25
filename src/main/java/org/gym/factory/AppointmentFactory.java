@@ -12,11 +12,11 @@ public class AppointmentFactory {
         /* Instantiation not allowed! */
     }
 
-    public static Appointment create(AppointmentType accountType, Client client, LocalDate day) {
+    public static Appointment create(AppointmentType accountType, int id, Client client, LocalDate day) {
         if (accountType.equals(AppointmentType.DEFAULT)) {
-            return new DefaultAppointment(client, day);
+            return new DefaultAppointment(id, client, day);
         } else {
-            return new PremiumAppointment(client, day);
+            return new PremiumAppointment(id, client, day);
         }
     }
 }

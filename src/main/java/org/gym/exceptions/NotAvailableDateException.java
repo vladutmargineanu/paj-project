@@ -4,19 +4,18 @@ import java.time.LocalDate;
 
 public class NotAvailableDateException extends DateLimitExceededException {
 
-	private static final long serialVersionUID = -3034651278778929257L;
+    private static final long serialVersionUID = -3034651278778929257L;
 
-	private LocalDate newAppointmentDate;
+    private LocalDate actualDate;
 
-
-	public NotAvailableDateException(DateLimitExceededException e, LocalDate newAppointmentDate) {
+    public NotAvailableDateException(DateLimitExceededException e, LocalDate actualDate) {
         super(e.getMessage());
         this.id = e.getId();
-		this.appointmentDate = e.getAppointmentDate();
-		this.newAppointmentDate = newAppointmentDate;
+        this.appointmentDate = e.getAppointmentDate();
+        this.actualDate = actualDate;
     }
 
-	public LocalDate getNewAppointmentDate() {
-		return newAppointmentDate;
-	}
+    public LocalDate getActualDate() {
+        return actualDate;
+    }
 }

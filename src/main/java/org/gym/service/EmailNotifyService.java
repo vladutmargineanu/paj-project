@@ -25,6 +25,7 @@ public class EmailNotifyService {
 
                 Thread.sleep(100);
             } catch (EmailException | InterruptedException exception) {
+
                 exception.printStackTrace();
 
                 if (exception instanceof InterruptedException) {

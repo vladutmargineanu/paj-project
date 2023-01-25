@@ -16,19 +16,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TestFactory {
     @Test
     public void testInstanceDefaultAppointment() {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
         LocalDate birthday = LocalDate.now();
 
-        Appointment defaultAppointment = AppointmentFactory.create(AppointmentType.DEFAULT, client, birthday);
+        Appointment defaultAppointment = AppointmentFactory.create(AppointmentType.DEFAULT, 1, client, birthday);
         assertThat(defaultAppointment, instanceOf(DefaultAppointment.class));
     }
 
     @Test
     public void testInstancePremiumAppointment() {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
         LocalDate birthday = LocalDate.now();
 
-        Appointment premiumAppointment = AppointmentFactory.create(AppointmentType.PREMIUM, client, birthday);
+        Appointment premiumAppointment = AppointmentFactory.create(AppointmentType.PREMIUM, 1, client, birthday);
         assertThat(premiumAppointment, instanceOf(PremiumAppointment.class));
     }
 }

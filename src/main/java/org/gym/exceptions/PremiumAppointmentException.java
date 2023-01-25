@@ -5,10 +5,6 @@ public class PremiumAppointmentException extends GymException {
 
     int id;
 
-    public PremiumAppointmentException(String message) {
-        super(message);
-    }
-
     public PremiumAppointmentException(int id, String message) {
         super(message);
         this.id = id;

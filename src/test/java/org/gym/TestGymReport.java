@@ -44,49 +44,49 @@ class TestGymReport {
         overmorrow = today.plusDays(2);
 
         yogaSession = new Session(SessionType.YOGA);
-        Trainer yogaTrainer = new Trainer("Jamie Hopkins", LocalDate.parse("1997-01-18"));
+        Trainer yogaTrainer = new Trainer("Andrew Lee", LocalDate.parse("1997-01-18"));
         yogaSession.setTrainer(yogaTrainer);
         gym.addSession(yogaSession);
 
         cyclingSession = new Session(SessionType.CYCLING);
-        Trainer cyclingTrainer = new Trainer("Jody Mcgee", LocalDate.parse("1993-09-16"));
+        Trainer cyclingTrainer = new Trainer("Vlad Oli", LocalDate.parse("1993-09-16"));
         cyclingSession.setTrainer(cyclingTrainer);
         gym.addSession(cyclingSession);
 
         strengthSession = new Session(SessionType.STRENGTH);
-        Trainer strengthTrainer = new Trainer("Charlie Farmer", LocalDate.parse("1994-08-27"));
+        Trainer strengthTrainer = new Trainer("Bianca Tee", LocalDate.parse("1994-08-27"));
         strengthSession.setTrainer(strengthTrainer);
         gym.addSession(strengthSession);
 
-        client1 = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        client1 = new Client("Cris Now", LocalDate.parse("2001-03-06"));
         gym.addClient(client1);
-        client2 = new Client("Billy Vega", LocalDate.parse("1995-02-11"));
+        client2 = new Client("Dani Vega", LocalDate.parse("1995-02-11"));
         gym.addClient(client2);
-        client3 = new Client("Wilbur Guzman", LocalDate.parse("1995-06-21"));
+        client3 = new Client("Ali Lee", LocalDate.parse("1995-06-21"));
         gym.addClient(client3);
-        client4 = new Client("Bernadette Myers", LocalDate.parse("1995-09-18"));
+        client4 = new Client("Marie Curie", LocalDate.parse("1995-09-18"));
         gym.addClient(client4);
-        client5 = new Client("Ian Jackson", LocalDate.parse("1998-03-27"));
+        client5 = new Client("Anna Aslan", LocalDate.parse("1998-03-27"));
         gym.addClient(client5);
 
-        yogaSession.addAppointment(new DefaultAppointment(client1, today));
-        yogaSession.addAppointment(new DefaultAppointment(client3, today));
-        yogaSession.addAppointment(new PremiumAppointment(client5, today));
-        strengthSession.addAppointment(new DefaultAppointment(client1, today));
-        strengthSession.addAppointment(new DefaultAppointment(client4, today));
-        cyclingSession.addAppointment(new DefaultAppointment(client2, today));
-        cyclingSession.addAppointment(new PremiumAppointment(client5, today));
+        yogaSession.addAppointment(new DefaultAppointment(1, client1, today));
+        yogaSession.addAppointment(new DefaultAppointment(3, client3, today));
+        yogaSession.addAppointment(new PremiumAppointment(5, client5, today));
+        strengthSession.addAppointment(new DefaultAppointment(1, client1, today));
+        strengthSession.addAppointment(new DefaultAppointment(4, client4, today));
+        cyclingSession.addAppointment(new DefaultAppointment(2, client2, today));
+        cyclingSession.addAppointment(new PremiumAppointment(5, client5, today));
 
-        yogaSession.addAppointment(new PremiumAppointment(client2, tomorrow));
-        yogaSession.addAppointment(new PremiumAppointment(client3, tomorrow));
-        strengthSession.addAppointment(new DefaultAppointment(client4, tomorrow));
-        strengthSession.addAppointment(new DefaultAppointment(client5, tomorrow));
-        cyclingSession.addAppointment(new DefaultAppointment(client1, tomorrow));
+        yogaSession.addAppointment(new PremiumAppointment(2, client2, tomorrow));
+        yogaSession.addAppointment(new PremiumAppointment(3, client3, tomorrow));
+        strengthSession.addAppointment(new DefaultAppointment(4, client4, tomorrow));
+        strengthSession.addAppointment(new DefaultAppointment(5, client5, tomorrow));
+        cyclingSession.addAppointment(new DefaultAppointment(1, client1, tomorrow));
 
-        yogaSession.addAppointment(new PremiumAppointment(client5, overmorrow));
-        strengthSession.addAppointment(new DefaultAppointment(client5, overmorrow));
-        cyclingSession.addAppointment(new DefaultAppointment(client1, overmorrow));
-        cyclingSession.addAppointment(new PremiumAppointment(client2, overmorrow));
+        yogaSession.addAppointment(new PremiumAppointment(5, client5, overmorrow));
+        strengthSession.addAppointment(new DefaultAppointment(5, client5, overmorrow));
+        cyclingSession.addAppointment(new DefaultAppointment(1, client1, overmorrow));
+        cyclingSession.addAppointment(new PremiumAppointment(2, client2, overmorrow));
     }
 
     @Test

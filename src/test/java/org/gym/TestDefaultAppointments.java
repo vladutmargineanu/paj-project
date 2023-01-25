@@ -2,72 +2,104 @@ package org.gym;
 
 
 import org.gym.appointment.DefaultAppointment;
-import org.gym.appointment.PremiumAppointment;
 import org.gym.domain.Gym;
 import org.gym.domain.Session;
 import org.gym.domain.SessionType;
+import org.gym.exceptions.AppointmentExistsException;
 import org.gym.exceptions.GymException;
+import org.gym.exceptions.PremiumAppointmentException;
 import org.gym.reports.GymReport;
 import org.gym.users.Client;
 import org.gym.users.Trainer;
 import org.gym.utils.Status;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TestAppointments {
+public class TestDefaultAppointments {
 
     private Client client;
     private Trainer trainer;
-    private Client otherClient;
     private LocalDate appointmentDay;
 
     @BeforeEach
     void setUp() {
-        client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
-        trainer = new Trainer("Jamie Hopkins", LocalDate.parse("1997-01-18"));
-        otherClient = new Client("Delores Phelps", LocalDate.parse("1982-02-05"));
+        client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
+        trainer = new Trainer("Vlad Oli", LocalDate.parse("1997-01-18"));
         appointmentDay = LocalDate.now();
     }
 
     @Test
     public void testClient() {
-        client.setName("Weird Name");
+        client.setName("Birth Name");
         client.setBirthday(LocalDate.of(2000,2, 20));
-        assertEquals("Weird Name", client.getName());
+
+        assertEquals("Birth Name", client.getName());
         assertEquals(LocalDate.of(2000,2, 20), client.getBirthday());
     }
 
     @Test
     public void testTrainer() {
-        trainer.setName("Weird Name");
+        trainer.setName("Birth Name");
         trainer.setBirthday(LocalDate.of(2000,2, 20));
-        assertEquals("Weird Name", trainer.getName());
+
+        assertEquals("Birth Name", trainer.getName());
         assertEquals(LocalDate.of(2000,2, 20), trainer.getBirthday());
     }
 
     @Test
-    public void testDefaultAppointment() {
-        DefaultAppointment defaultAppointment = new DefaultAppointment(client, appointmentDay);
+    public void testDefaultRescheduleAppointmentException() {
+
+        DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
+        PremiumAppointmentException thrown = Assertions.assertThrows(PremiumAppointmentException.class, () -> {
+            defaultAppointment.rescheduleAppointment(appointmentDay.plusDays(1));
+        });
+
         assertEquals(client, defaultAppointment.getClient());
         assertEquals(50.0, defaultAppointment.getPrice());
         assertEquals(appointmentDay, defaultAppointment.getAppointmentDate());
-        assertFalse(defaultAppointment.rescheduleAppointment(appointmentDay.plusDays(1)));
+        assertEquals("Only PREMIUM appointments can be rescheduled.", thrown.getMessage());
+        assertEquals(defaultAppointment.getId(), thrown.getId());
+
     }
 
     @Test
-    public void testPremiumAppointment() {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
-        LocalDate appointmentDay = LocalDate.now();
-        PremiumAppointment premiumAppointment = new PremiumAppointment(client, appointmentDay);
-        assertEquals(client, premiumAppointment.getClient());
-        assertEquals(75.0, premiumAppointment.getPrice());
-        assertEquals(appointmentDay, premiumAppointment.getAppointmentDate());
-        assertTrue(premiumAppointment.rescheduleAppointment(appointmentDay.plusDays(1)));
+    public void testDefaultCancelAppointmentException() {
+
+        DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
+        PremiumAppointmentException thrown = assertThrows(PremiumAppointmentException.class, defaultAppointment::cancelAppointment);
+
+        assertEquals(client, defaultAppointment.getClient());
+        assertEquals(50.0, defaultAppointment.getPrice());
+        assertEquals(appointmentDay, defaultAppointment.getAppointmentDate());
+        assertEquals("Only PREMIUM appointments can be canceled.", thrown.getMessage());
+        assertEquals(defaultAppointment.getId(), thrown.getId());
     }
+
+    @Test
+    public void testDefaultDuplicateAppointmentException() throws AppointmentExistsException {
+
+        DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
+        DefaultAppointment defaultAppointment2 = defaultAppointment;
+
+        Session session = new Session(SessionType.YOGA);
+        session.setType(SessionType.CYCLING);
+        session.setTrainer(trainer);
+
+        session.addAppointment(defaultAppointment);
+
+        AppointmentExistsException thrown = assertThrows(AppointmentExistsException.class, () -> {
+            session.addAppointment(defaultAppointment2);
+        });
+
+        assertEquals("Appointment already exists in the Session.", thrown.getMessage());
+    }
+
 
     @Test
     public void testClientAppointmentWithSession() throws GymException {
@@ -81,17 +113,15 @@ public class TestAppointments {
         session.setTrainer(trainer);
         gym.addSession(session);
 
-        DefaultAppointment defaultAppointment = new DefaultAppointment(client, appointmentDay);
+        DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
         session.addAppointment(defaultAppointment);
-        PremiumAppointment premiumAppointment = new PremiumAppointment(client, appointmentDay);
-        session.addAppointment(premiumAppointment);
-        DefaultAppointment defaultAppointmentLater = new DefaultAppointment(client, appointmentDay.plusDays(1));
+
+        DefaultAppointment defaultAppointmentLater = new DefaultAppointment(2, client, appointmentDay.plusDays(1));
         session.addAppointment(defaultAppointmentLater);
 
         assertEquals("Cycling", session.getType().getName());
         assertEquals(trainer, session.getTrainer());
         assertEquals(2, gymReport.getDefaultAppointmentsForClient(gym, client).size());
-        assertEquals(1, gymReport.getPremiumAppointmentsForClient(gym, client).size());
     }
 
     @Test
@@ -101,20 +131,13 @@ public class TestAppointments {
 
         GymReport gymReport = new GymReport();
 
-        DefaultAppointment defaultAppointment = new DefaultAppointment(client, appointmentDay);
-        PremiumAppointment premiumAppointment = new PremiumAppointment(client, appointmentDay);
-        DefaultAppointment defaultAppointmentLater = new DefaultAppointment(client, appointmentDay.plusDays(1));
-
         assertEquals(0, gymReport.getDefaultAppointmentsForClient(gym, client).size());
-        assertEquals(0, gymReport.getPremiumAppointmentsForClient(gym, client).size());
     }
 
     @Test
-    public void testDuplicateSession() throws GymException {
+    public void testDuplicateSessionException() throws GymException {
         Gym gym = new Gym();
         gym.addClient(client);
-
-        GymReport gymReport = new GymReport();
 
         Session session = new Session(SessionType.YOGA);
 
@@ -128,9 +151,8 @@ public class TestAppointments {
     }
 
     @Test
-    public void testDuplicateClient() throws GymException {
+    public void testDuplicateClientException()  {
         Gym gym = new Gym();
-        GymReport gymReport = new GymReport();
 
         GymException exception = assertThrows(GymException.class, () -> {
             gym.addClient(client);

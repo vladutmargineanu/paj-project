@@ -25,7 +25,7 @@ public class Session {
 
     public void addAppointment(final Appointment appointment) throws AppointmentExistsException {
         if (appointments.contains(appointment)) {
-            throw new AppointmentExistsException("Appointment already exists in the Session");
+            throw new AppointmentExistsException("Appointment already exists in the Session.");
         }
         this.appointments.add(appointment);
     }

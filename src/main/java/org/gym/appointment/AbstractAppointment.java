@@ -22,11 +22,6 @@ public abstract class AbstractAppointment implements Appointment {
         this.client = client;
         this.appointmentDate = appointmentDate;
     }
-    protected AbstractAppointment(Double price, Client client, LocalDate appointmentDate) {
-        this.price = price;
-        this.client = client;
-        this.appointmentDate = appointmentDate;
-    }
 
     @Override
     public int getId() {
@@ -49,10 +44,24 @@ public abstract class AbstractAppointment implements Appointment {
     }
 
     @Override
+    public Boolean rescheduleAppointment(LocalDate date) throws PremiumAppointmentException {
+        if (this.getId() < 0) {
+            throw new PremiumAppointmentException(this.id, "Try again!");
+        }
+
+        setAppointmentDate(date);
+        return true;
+    }
+
+    @Override
     public Boolean cancelAppointment() throws DateLimitExceededException, PremiumAppointmentException {
 
         if (LocalDate.now().isAfter(this.appointmentDate)) {
-            throw new DateLimitExceededException(this.id, this.appointmentDate, "The appointment date cannot be canceled after the expiration date");
+            throw new DateLimitExceededException(this.id, this.appointmentDate, "The appointment date cannot be canceled after the expiration date.");
+        }
+
+        if (this.getId() < 0) {
+            throw new PremiumAppointmentException(this.id, "Try again!");
         }
 
         this.appointmentDate = null;

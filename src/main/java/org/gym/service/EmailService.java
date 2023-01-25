@@ -9,7 +9,7 @@ public class EmailService implements Runnable {
 
     private int sentEmails = 0;
     private boolean closedService;
-    private final Queue queue = new Queue();
+    private final Queue<Email> queue = new Queue<>();
 
     public EmailService() {
         new Thread(this).start();

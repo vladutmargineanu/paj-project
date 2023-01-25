@@ -17,7 +17,7 @@ public class TestEmail {
 
     @Test
     public void testSendMail() throws InterruptedException {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
 
         EmailService emailService = new EmailService();
         for (int i = 0; i < 10; i++) {
@@ -37,7 +37,7 @@ public class TestEmail {
 
     @Test
     public void testSendMailClosedService() throws EmailException {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
 
         EmailService emailService = new EmailService();
         emailService.close();
@@ -56,7 +56,7 @@ public class TestEmail {
 
     @Test
     public void testSendMailInterruptedException() throws InterruptedException {
-        Client client = new Client("Shelia Burke", LocalDate.parse("2001-03-06"));
+        Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
 
         EmailService emailService = new EmailService();
 
