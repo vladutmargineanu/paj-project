@@ -6,7 +6,10 @@ import org.gym.exceptions.EmailException;
 import org.gym.utils.Status;
 
 public class EmailService implements Runnable {
-
+    /*
+     * Thread object - the worker - currentThread
+     * The runnable (the job) is the EmailService instance (this)
+     */
     private int sentEmails = 0;
     private boolean closedService;
 
@@ -32,7 +35,7 @@ public class EmailService implements Runnable {
             }
             try {
                 synchronized (queue) {
-                    queue.wait();
+                    queue.wait();  // thread give up lock and wait
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -56,7 +59,7 @@ public class EmailService implements Runnable {
         if (!closedService) {
             queue.add(email);
             synchronized (queue) {
-                queue.notify();
+                queue.notify();  // notify waiting threads to resume
             }
         } else
             throw new EmailException(Status.EMAIL_SERVICE_UNAVAILABLE);
