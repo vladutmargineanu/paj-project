@@ -3,6 +3,7 @@ package org.gym;
 import org.gym.appointment.Appointment;
 import org.gym.appointment.DefaultAppointment;
 import org.gym.appointment.PremiumAppointment;
+import org.gym.appointment.PremiumBenefit;
 import org.gym.factory.AppointmentFactory;
 import org.gym.factory.AppointmentType;
 import org.gym.users.Client;
@@ -19,7 +20,7 @@ public class TestFactory {
         Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
         LocalDate birthday = LocalDate.now();
 
-        Appointment defaultAppointment = AppointmentFactory.create(AppointmentType.DEFAULT, 1, client, birthday);
+        Appointment defaultAppointment = AppointmentFactory.createAppointment(AppointmentType.DEFAULT, 1, client, birthday, null);
         assertThat(defaultAppointment, instanceOf(DefaultAppointment.class));
     }
 
@@ -28,7 +29,7 @@ public class TestFactory {
         Client client = new Client("Andrew Lee", LocalDate.parse("2001-03-06"));
         LocalDate birthday = LocalDate.now();
 
-        Appointment premiumAppointment = AppointmentFactory.create(AppointmentType.PREMIUM, 1, client, birthday);
+        Appointment premiumAppointment = AppointmentFactory.createAppointment(AppointmentType.PREMIUM, 1, client, birthday, PremiumBenefit.SHOWER);
         assertThat(premiumAppointment, instanceOf(PremiumAppointment.class));
     }
 }

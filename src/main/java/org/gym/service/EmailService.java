@@ -9,10 +9,14 @@ public class EmailService implements Runnable {
 
     private int sentEmails = 0;
     private boolean closedService;
+
+    private final Thread currentThread;
+
     private final Queue<Email> queue = new Queue<>();
 
     public EmailService() {
-        new Thread(this).start();
+        currentThread = new Thread(this);
+        currentThread.start();
     }
 
     @Override

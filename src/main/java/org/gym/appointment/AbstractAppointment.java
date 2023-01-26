@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 @Setter(AccessLevel.PROTECTED)
 public abstract class AbstractAppointment implements Appointment {
-
     private int id;
     private Double price;
-    private Client client;
+
+    private final Client client;
     private LocalDate appointmentDate;
 
     public AbstractAppointment(int id, Double price, Client client, LocalDate appointmentDate) {
@@ -66,5 +66,24 @@ public abstract class AbstractAppointment implements Appointment {
 
         this.appointmentDate = null;
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractAppointment that)) return false;
+
+        if (getId() != that.getId()) return false;
+        if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) return false;
+        if (getClient() != null ? !getClient().equals(that.getClient()) : that.getClient() != null) return false;
+        return getAppointmentDate() != null ? getAppointmentDate().equals(that.getAppointmentDate()) : that.getAppointmentDate() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + getId();
+        return result;
     }
 }

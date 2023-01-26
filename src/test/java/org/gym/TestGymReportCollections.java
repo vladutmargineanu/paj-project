@@ -7,7 +7,8 @@ import org.gym.domain.Gym;
 import org.gym.domain.Session;
 import org.gym.domain.SessionType;
 import org.gym.exceptions.GymException;
-import org.gym.reports.GymReport;
+import org.gym.reports.GymReportCollections;
+import org.gym.service.GymService;
 import org.gym.users.Client;
 import org.gym.users.Trainer;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,12 +18,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static org.gym.appointment.PremiumBenefit.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestGymReport {
+class TestGymReportCollections {
 
     private Gym gym;
-    private GymReport gymReport;
+    private GymReportCollections gymReport;
     private Session yogaSession;
     private Session cyclingSession;
     private Session strengthSession;
@@ -38,7 +40,7 @@ class TestGymReport {
     @BeforeEach
     void setUp() throws GymException {
         gym = new Gym();
-        gymReport = new GymReport();
+        gymReport = new GymReportCollections();
         today = LocalDate.now();
         tomorrow = today.plusDays(1);
         overmorrow = today.plusDays(2);
@@ -46,47 +48,47 @@ class TestGymReport {
         yogaSession = new Session(SessionType.YOGA);
         Trainer yogaTrainer = new Trainer("Andrew Lee", LocalDate.parse("1997-01-18"));
         yogaSession.setTrainer(yogaTrainer);
-        gym.addSession(yogaSession);
+        GymService.addSession(gym, yogaSession);
 
         cyclingSession = new Session(SessionType.CYCLING);
         Trainer cyclingTrainer = new Trainer("Vlad Oli", LocalDate.parse("1993-09-16"));
         cyclingSession.setTrainer(cyclingTrainer);
-        gym.addSession(cyclingSession);
+        GymService.addSession(gym, cyclingSession);
 
         strengthSession = new Session(SessionType.STRENGTH);
         Trainer strengthTrainer = new Trainer("Bianca Tee", LocalDate.parse("1994-08-27"));
         strengthSession.setTrainer(strengthTrainer);
-        gym.addSession(strengthSession);
+        GymService.addSession(gym, strengthSession);
 
         client1 = new Client("Cris Now", LocalDate.parse("2001-03-06"));
-        gym.addClient(client1);
+        GymService.addClient(gym, client1);
         client2 = new Client("Dani Vega", LocalDate.parse("1995-02-11"));
-        gym.addClient(client2);
+        GymService.addClient(gym, client2);
         client3 = new Client("Ali Lee", LocalDate.parse("1995-06-21"));
-        gym.addClient(client3);
+        GymService.addClient(gym, client3);
         client4 = new Client("Marie Curie", LocalDate.parse("1995-09-18"));
-        gym.addClient(client4);
+        GymService.addClient(gym, client4);
         client5 = new Client("Anna Aslan", LocalDate.parse("1998-03-27"));
-        gym.addClient(client5);
+        GymService.addClient(gym, client5);
 
         yogaSession.addAppointment(new DefaultAppointment(1, client1, today));
         yogaSession.addAppointment(new DefaultAppointment(3, client3, today));
-        yogaSession.addAppointment(new PremiumAppointment(5, client5, today));
+        yogaSession.addAppointment(new PremiumAppointment(5, client5, today, SAUNA));
         strengthSession.addAppointment(new DefaultAppointment(1, client1, today));
         strengthSession.addAppointment(new DefaultAppointment(4, client4, today));
         cyclingSession.addAppointment(new DefaultAppointment(2, client2, today));
-        cyclingSession.addAppointment(new PremiumAppointment(5, client5, today));
+        cyclingSession.addAppointment(new PremiumAppointment(5, client5, today, SHOWER));
 
-        yogaSession.addAppointment(new PremiumAppointment(2, client2, tomorrow));
-        yogaSession.addAppointment(new PremiumAppointment(3, client3, tomorrow));
+        yogaSession.addAppointment(new PremiumAppointment(2, client2, tomorrow, BODY_CHECK));
+        yogaSession.addAppointment(new PremiumAppointment(3, client3, tomorrow, SAUNA));
         strengthSession.addAppointment(new DefaultAppointment(4, client4, tomorrow));
         strengthSession.addAppointment(new DefaultAppointment(5, client5, tomorrow));
         cyclingSession.addAppointment(new DefaultAppointment(1, client1, tomorrow));
 
-        yogaSession.addAppointment(new PremiumAppointment(5, client5, overmorrow));
+        yogaSession.addAppointment(new PremiumAppointment(5, client5, overmorrow, SHOWER));
         strengthSession.addAppointment(new DefaultAppointment(5, client5, overmorrow));
         cyclingSession.addAppointment(new DefaultAppointment(1, client1, overmorrow));
-        cyclingSession.addAppointment(new PremiumAppointment(2, client2, overmorrow));
+        cyclingSession.addAppointment(new PremiumAppointment(2, client2, overmorrow, BODY_CHECK));
     }
 
     @Test
@@ -157,9 +159,9 @@ class TestGymReport {
 
     @Test
     void getAppointmentsForADay() {
-        assertEquals(7 , gymReport.getAppointmentsForADay(gym, today).size());
-        assertEquals(5 , gymReport.getAppointmentsForADay(gym, tomorrow).size());
-        assertEquals(4 , gymReport.getAppointmentsForADay(gym, overmorrow).size());
+        assertEquals(7, gymReport.getAppointmentsForADay(gym, today).size());
+        assertEquals(5, gymReport.getAppointmentsForADay(gym, tomorrow).size());
+        assertEquals(4, gymReport.getAppointmentsForADay(gym, overmorrow).size());
     }
 
     @Test
@@ -178,16 +180,16 @@ class TestGymReport {
 
     @Test
     void getDefaultAppointmentsForClientAtSession() {
-        assertEquals(1 , gymReport.getDefaultAppointmentsForClientAtSession(gym, client1, yogaSession).size());
-        assertEquals(2 , gymReport.getDefaultAppointmentsForClientAtSession(gym, client1, cyclingSession).size());
-        assertEquals(0 , gymReport.getDefaultAppointmentsForClientAtSession(gym, client3, strengthSession).size());
-        assertEquals(0 , gymReport.getDefaultAppointmentsForClientAtSession(gym, client5, cyclingSession).size());
+        assertEquals(1, gymReport.getDefaultAppointmentsForClientAtSession(gym, client1, yogaSession).size());
+        assertEquals(2, gymReport.getDefaultAppointmentsForClientAtSession(gym, client1, cyclingSession).size());
+        assertEquals(0, gymReport.getDefaultAppointmentsForClientAtSession(gym, client3, strengthSession).size());
+        assertEquals(0, gymReport.getDefaultAppointmentsForClientAtSession(gym, client5, cyclingSession).size());
     }
 
     @Test
     void getDefaultAppointmentForClientAtSessionInADay() {
         assertNull(gymReport.getDefaultAppointmentForClientAtSessionInADay(gym, client1, cyclingSession, today));
-        assertNotNull( gymReport.getDefaultAppointmentForClientAtSessionInADay(gym, client1, cyclingSession, tomorrow));
+        assertNotNull(gymReport.getDefaultAppointmentForClientAtSessionInADay(gym, client1, cyclingSession, tomorrow));
         assertNotNull(gymReport.getDefaultAppointmentForClientAtSessionInADay(gym, client1, cyclingSession, overmorrow));
     }
 
@@ -207,15 +209,15 @@ class TestGymReport {
 
     @Test
     void getPremiumAppointmentsForClientAtSession() {
-        assertEquals(1 , gymReport.getPremiumAppointmentsForClientAtSession(gym, client2, yogaSession).size());
-        assertEquals(1 , gymReport.getPremiumAppointmentsForClientAtSession(gym, client2, cyclingSession).size());
-        assertEquals(0 , gymReport.getPremiumAppointmentsForClientAtSession(gym, client5, strengthSession).size());
-        assertEquals(1 , gymReport.getPremiumAppointmentsForClientAtSession(gym, client5, cyclingSession).size());
+        assertEquals(1, gymReport.getPremiumAppointmentsForClientAtSession(gym, client2, yogaSession).size());
+        assertEquals(1, gymReport.getPremiumAppointmentsForClientAtSession(gym, client2, cyclingSession).size());
+        assertEquals(0, gymReport.getPremiumAppointmentsForClientAtSession(gym, client5, strengthSession).size());
+        assertEquals(1, gymReport.getPremiumAppointmentsForClientAtSession(gym, client5, cyclingSession).size());
     }
 
     @Test
     void getPremiumAppointmentForClientAtSessionInADay() {
-        assertNotNull( gymReport.getPremiumAppointmentForClientAtSessionInADay(gym, client5, cyclingSession, today));
+        assertNotNull(gymReport.getPremiumAppointmentForClientAtSessionInADay(gym, client5, cyclingSession, today));
         assertNull(gymReport.getPremiumAppointmentForClientAtSessionInADay(gym, client5, strengthSession, tomorrow));
         assertNotNull(gymReport.getPremiumAppointmentForClientAtSessionInADay(gym, client5, yogaSession, overmorrow));
     }

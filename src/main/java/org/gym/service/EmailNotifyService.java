@@ -8,13 +8,13 @@ import org.gym.utils.Status;
 
 public class EmailNotifyService {
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
     public EmailNotifyService(EmailService emailService) {
         this.emailService = emailService;
     }
 
-    public void notify(Client client) {
+    public void notifyMailer(Client client) {
         System.out.println(Status.SENDING_EMAIL_CLIENT + ": " + client.getName());
 
         if (emailService != null) {

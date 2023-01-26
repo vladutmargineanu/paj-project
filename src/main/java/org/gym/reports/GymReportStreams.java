@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class GymReport {
+public class GymReportStreams {
 
     public Map<SessionType, List<Session>> getSessionsByCategory(Gym gym) {
         return gym.getSessions().stream().collect(Collectors.groupingBy(Session::getType));

@@ -8,18 +8,13 @@ import org.gym.users.Client;
 import java.time.LocalDate;
 
 public class PremiumAppointment extends AbstractAppointment {
-
     private static final Double PRICE = 75.0;
-    private final Client client;
 
-    public PremiumAppointment(int id, Client client, LocalDate appointmentDate) {
+    private PremiumBenefit premiumBenefit;
+
+    public PremiumAppointment(int id, Client client, LocalDate appointmentDate, PremiumBenefit premiumBenefit) {
         super(id, PRICE, client, appointmentDate);
-        this.client = client;
-    }
-
-    @Override
-    public Client getClient() {
-        return client;
+        this.premiumBenefit = premiumBenefit;
     }
 
     @Override
@@ -44,4 +39,18 @@ public class PremiumAppointment extends AbstractAppointment {
         }
     }
 
+    public PremiumBenefit getPremiumBenefit() {
+        return premiumBenefit;
+    }
+
+    @Override
+    public String toString() {
+        return "PremiumAppointment{" +
+                "id=" + getId() +
+                ", price=" + getPrice() +
+                ", client=" + getClient() +
+                ", appointmentDate=" + getAppointmentDate() +
+                "premiumBenefit=" + premiumBenefit +
+                '}';
+    }
 }

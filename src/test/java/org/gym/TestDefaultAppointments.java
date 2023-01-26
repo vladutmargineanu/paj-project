@@ -1,6 +1,5 @@
 package org.gym;
 
-
 import org.gym.appointment.DefaultAppointment;
 import org.gym.domain.Gym;
 import org.gym.domain.Session;
@@ -8,7 +7,8 @@ import org.gym.domain.SessionType;
 import org.gym.exceptions.AppointmentExistsException;
 import org.gym.exceptions.GymException;
 import org.gym.exceptions.PremiumAppointmentException;
-import org.gym.reports.GymReport;
+import org.gym.reports.GymReportStreams;
+import org.gym.service.GymService;
 import org.gym.users.Client;
 import org.gym.users.Trainer;
 import org.gym.utils.Status;
@@ -82,10 +82,9 @@ public class TestDefaultAppointments {
     }
 
     @Test
-    public void testDefaultDuplicateAppointmentException() throws AppointmentExistsException {
+    public void testDefaultDuplicateAppointmentException() throws GymException {
 
         DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
-        DefaultAppointment defaultAppointment2 = defaultAppointment;
 
         Session session = new Session(SessionType.YOGA);
         session.setType(SessionType.CYCLING);
@@ -94,7 +93,7 @@ public class TestDefaultAppointments {
         session.addAppointment(defaultAppointment);
 
         AppointmentExistsException thrown = assertThrows(AppointmentExistsException.class, () -> {
-            session.addAppointment(defaultAppointment2);
+            session.addAppointment(defaultAppointment);
         });
 
         assertEquals("Appointment already exists in the Session.", thrown.getMessage());
@@ -104,14 +103,14 @@ public class TestDefaultAppointments {
     @Test
     public void testClientAppointmentWithSession() throws GymException {
         Gym gym = new Gym();
-        gym.addClient(client);
+        GymService.addClient(gym, client);
 
-        GymReport gymReport = new GymReport();
+        GymReportStreams gymReport = new GymReportStreams();
 
         Session session = new Session(SessionType.YOGA);
         session.setType(SessionType.CYCLING);
         session.setTrainer(trainer);
-        gym.addSession(session);
+        GymService.addSession(gym, session);
 
         DefaultAppointment defaultAppointment = new DefaultAppointment(1, client, appointmentDay);
         session.addAppointment(defaultAppointment);
@@ -127,9 +126,9 @@ public class TestDefaultAppointments {
     @Test
     public void testClientAppointmentWithoutSession() throws GymException {
         Gym gym = new Gym();
-        gym.addClient(client);
+        GymService.addClient(gym, client);
 
-        GymReport gymReport = new GymReport();
+        GymReportStreams gymReport = new GymReportStreams();
 
         assertEquals(0, gymReport.getDefaultAppointmentsForClient(gym, client).size());
     }
@@ -137,13 +136,13 @@ public class TestDefaultAppointments {
     @Test
     public void testDuplicateSessionException() throws GymException {
         Gym gym = new Gym();
-        gym.addClient(client);
+        GymService.addClient(gym, client);
 
         Session session = new Session(SessionType.YOGA);
 
         GymException exception = assertThrows(GymException.class, () -> {
-            gym.addSession(session);
-            gym.addSession(session);
+            GymService.addSession(gym, session);
+            GymService.addSession(gym, session);
         });
 
         assertEquals(1, gym.getSessions().size());
@@ -155,8 +154,8 @@ public class TestDefaultAppointments {
         Gym gym = new Gym();
 
         GymException exception = assertThrows(GymException.class, () -> {
-            gym.addClient(client);
-            gym.addClient(client);
+            GymService.addClient(gym, client);
+            GymService.addClient(gym, client);
         });
 
         assertEquals(1, gym.getClients().size());
